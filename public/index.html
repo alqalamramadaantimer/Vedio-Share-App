@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Video Share App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Upload and Share Your Video</h1>
+
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" id="fileInput" name="video" required />
+        <button type="submit">Upload Video</button>
+    </form>
+
+    <div id="linkContainer" style="margin-top: 20px;"></div>
+
+    <script>
+        const form = document.getElementById('uploadForm');
+        const linkContainer = document.getElementById('linkContainer');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const fileInput = document.getElementById('fileInput');
+            const formData = new FormData();
+            formData.append('video', fileInput.files[0]);
+
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                linkContainer.innerHTML = `<p>Share this link: <a href="${data.link}" target="_blank">${data.link}</a></p>`;
+            } catch (error) {
+                linkContainer.innerHTML = '<p>Error uploading video. Try again.</p>';
+                console.error('Error:', error);
+            }
+        });
+    </script>
+</body>
+
+</html>
